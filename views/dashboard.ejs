@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas Links - Dashboard</title>
+    <link rel="stylesheet" href="/style.css?v=<%= siteVersion %>">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="header-left">
+                <span class="header-title">Atlas Links Configuration</span>
+            </div>
+            <div class="header-right">
+                <a href="/logout" class="builder-btn-red">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <% if (error) { %>
+            <div class="error-banner">⚠️ <%= error %></div>
+        <% } %>
+
+        <div class="builder">
+            <h3 style="margin-top: 0; color: #fff;">Create New Link</h3>
+            <form action="/shorten" method="POST" class="input-group">
+                <div class="input-wrapper" style="flex: 2;">
+                    <label>Destination URL</label>
+                    <input type="url" name="long_url" placeholder="https://website.com/..." required>
+                </div>
+                <div class="input-wrapper" style="flex: 1;">
+                    <label>Custom Name</label>
+                    <input type="text" name="custom_name" placeholder="customname (no spaces)" pattern="[a-zA-Z0-9-_]+" required>
+                </div>
+                <button type="submit" class="builder-btn">Shorten</button>
+            </form>
+        </div>
+
+        <div class="preview">
+            <h3 style="margin-top: 0; color: #fff;">Active Links</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Short Link</th>
+                        <th>Destination</th>
+                        <th>Clicks</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% links.forEach(function(link) { %>
+                        <tr>
+                            <td><a class="link" href="https://<%= domain %>/<%= link.short_code %>" target="_blank"><%= domain %>/<%= link.short_code %></a></td>
+                            <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= link.long_url %></td>
+                            <td style="color: #b9bbbe;"><%= link.clicks %></td>
+                            <td style="text-align: right;">
+                                <form action="/delete/<%= link.id %>" method="POST" style="margin: 0;">
+                                    <button type="submit" class="builder-btn-red" style="padding: 6px 12px; font-size: 12px; height: auto;" onclick="return confirm('Are you sure you want to delete this link?');">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & Discussion
+    url: https://discord.gg/atlasdev
+    about: Ask questions and chat with the community on Discord
+documentation:
+  - name: Documentation
+    url: https://docs.madebyatlas.dev
+    about: View documentation
+terms_of_use:
+  - name: Terms of Use
+    url: https://madebyatlas.dev/terms
+    about: View our Terms of Use
+privacy_policy:
+  - name: Privacy Policy
+    url: https://madebyatlas.dev/privacy
+    about: View our Privacy Policy
