@@ -1,4 +1,11 @@
 {
+  "name": "mcgrim-link-shortener",
+  "author": "McGRiM (github.com/mcgrimtv)",
+  "version": "1.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "dotenv": "^17.4.2",
     "ejs": "^5.0.2",
