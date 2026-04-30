@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [[1.1.0](https://github.com/McGRiMTV/link-shortener/releases/tag/v1.1.0)] - 2026-04-30
+
+### Added
+- Password Protection: Ability to set links to password protected which will route viewers to a page prompting them to insert a password to view the destination
+
 ## [[1.0.0](https://github.com/McGRiMTV/link-shortener/releases/tag/v1.0.0)] - 2026-04-23
 
 ### Added

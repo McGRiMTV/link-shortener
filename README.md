@@ -33,7 +33,7 @@
 * **Domain:** Your custom domain `e.g., go.yourdomain.com` (Routed through Cloudflare)
 
 #### 1. Database Setup
-1. Create a new PostgreSQL database instance in your Railway project.
+1. Create a new PostgreSQL database instance in your Railway project (or your own SQL).
 2. Connect to your new database using the Railway CLI or a tool like pgAdmin/DBeaver.
 3. Run the following SQL command to create the necessary table structure:
 
@@ -43,14 +43,16 @@ CREATE TABLE links (
     short_code VARCHAR(50) UNIQUE NOT NULL,
     long_url TEXT NOT NULL,
     clicks INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_protected BOOLEAN DEFAULT FALSE,
+    password VARCHAR(255)
 );
 ```
 
-#### 2. Railway Deployment
-1. Fork or clone this repository and deploy it via the [Railway dashboard](https://railway.com/dashboard).
+#### 2. Railway Deployment*
+1. Fork or clone this repository and deploy it via the [Railway dashboard](https://railway.com/dashboard)\*\*.
 2. In your Railway Project Settings, navigate to the **Variables** tab.
-3. Add the following environment variables:
+3. Add the following environment variables\*\*\*:
 
 | Variable | Value Description |
 | :--- | :--- |
@@ -60,7 +62,9 @@ CREATE TABLE links (
 | `SESSION_SECRET` | A randomized string used to encrypt session cookies ([Generate a Secret](https://api.madebyatlas.dev/password?length=40)). |
 | `NODE_ENV` | Set this to `production` to enable secure cookies. |
 
-*Note: Railway will automatically install the necessary NPM dependencies during the build phase.*
+*\*Other deployment options are possible, Railway is just suggested for ease.*<br>
+*\*\*Railway will automatically install the necessary NPM dependencies during the build phase.*<br>
+*\*\*\*For deployment elsewhere you can use a standard `.env` file and insert the variables as such (e.g. `ADMIN_PASS=SuperSecretPassword`, etc).*
 
 #### 3. Usage & Configuration
 1. Go to `https://go.yourdomain.com/`
@@ -76,7 +80,9 @@ For support regarding this repository please join the [Atlas Development Discord
 Please join the Discord server linked above and submit a bug via the `#bugs` forum.
 
 ## License
-This project is licensed under the MIT License. This is a permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.
+This project is licensed under the MIT License.<br>
+This is a permissive license with conditions only requiring preservation of copyright and license notices.<br>
+Licensed works, modifications, and larger works may be distributed under different terms and without source code.
 
 The license is viewable [here](LICENSE).
 

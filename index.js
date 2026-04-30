@@ -88,8 +88,25 @@ app.post('/delete/:id', requireAuth, async (req, res) => {
     }
 });
 
+app.post('/edit/:id', requireAuth, async (req, res) => {
+    const { id } = req.params;
+    const { long_url, is_protected, password } = req.body;
+    const isProtectedBool = is_protected === 'on';
+
+    try {
+        await pool.query(
+            'UPDATE links SET long_url = $1, is_protected = $2, password = $3 WHERE id = $4',
+            [long_url.trim(), isProtectedBool, isProtectedBool ? password : null, id]
+        );
+        res.redirect('/dashboard');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/dashboard?error=exists');
+    }
+});
+
 app.post('/shorten', requireAuth, async (req, res) => {
-    const { long_url, custom_name } = req.body;
+    const { long_url, custom_name, is_protected, password } = req.body;
     
     if (!long_url || !custom_name) return res.redirect('/dashboard');
     const normalizedName = custom_name.trim().toLowerCase();
@@ -98,10 +115,12 @@ app.post('/shorten', requireAuth, async (req, res) => {
         return res.redirect('/dashboard?error=reserved');
     }
 
+    const isProtectedBool = is_protected === 'on';
+
     try {
         await pool.query(
-            'INSERT INTO links (short_code, long_url) VALUES ($1, $2)',
-            [normalizedName, long_url.trim()]
+            'INSERT INTO links (short_code, long_url, is_protected, password) VALUES ($1, $2, $3, $4)',
+            [normalizedName, long_url.trim(), isProtectedBool, isProtectedBool ? password : null]
         );
         res.redirect('/dashboard');
     } catch (err) {
@@ -113,10 +132,40 @@ app.post('/shorten', requireAuth, async (req, res) => {
 app.get('/:code', async (req, res) => {
     const { code } = req.params;
     try {
-        const result = await pool.query('SELECT long_url FROM links WHERE short_code = $1', [code]);
+        const result = await pool.query('SELECT * FROM links WHERE short_code = $1', [code]);
         if (result.rows.length > 0) {
-            pool.query('UPDATE links SET clicks = clicks + 1 WHERE short_code = $1', [code]);
-            return res.redirect(result.rows[0].long_url);
+            const link = result.rows[0];
+            
+            if (link.is_protected) {
+                return res.render('password', { code: link.short_code, error: null });
+            } else {
+                pool.query('UPDATE links SET clicks = clicks + 1 WHERE short_code = $1', [code]);
+                return res.redirect(link.long_url);
+            }
+        } else {
+            return res.status(404).send('Link not found');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+});
+
+app.post('/:code/unlock', async (req, res) => {
+    const { code } = req.params;
+    const { password } = req.body;
+
+    try {
+        const result = await pool.query('SELECT * FROM links WHERE short_code = $1', [code]);
+        if (result.rows.length > 0) {
+            const link = result.rows[0];
+            
+            if (link.is_protected && link.password === password) {
+                pool.query('UPDATE links SET clicks = clicks + 1 WHERE short_code = $1', [code]);
+                return res.redirect(link.long_url);
+            } else {
+                return res.render('password', { code: link.short_code, error: 'Incorrect password. Try again.' });
+            }
         } else {
             return res.status(404).send('Link not found');
         }
